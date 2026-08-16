@@ -2,7 +2,7 @@ name: Push Live Scores to Tidbyt
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Automatically runs every 5 minutes
+    - cron: '*/5 * * * *'  # Automatically refreshes every 5 minutes
   workflow_dispatch:      # Gives you a button to test it instantly
 
 jobs:
@@ -12,9 +12,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # Downloads the exact official Tidbyt Pixlet tool directly from their storage
       - name: Install Pixlet
         run: |
-          sudo snap install pixlet
+          curl -LO https://github.com
+          tar -xvf pixlet_0.29.1_linux_amd64.tar.gz
+          sudo mv pixlet /usr/local/bin/pixlet
 
       # Converts your .star text code into a mini pixelated graphic
       - name: Render App to WebP
