@@ -12,7 +12,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Downloads the exact official Tidbyt Pixlet tool directly from their storage
+      # Downloads the official Tidbyt Pixlet tool directly from their storage
       - name: Install Pixlet
         run: |
           curl -LO https://github.com
