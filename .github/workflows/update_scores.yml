@@ -29,8 +29,8 @@ jobs:
           sudo mv ./pixlet /usr/local/bin/pixlet
           pixlet version
 
-      - name: Render app
-        run: pixlet render sports_app.star --output sports_app.webp
+     - name: Render app
+  run: pixlet render sports_app.star league=mlb --output sports_app.webp
 
       - name: Push to Tidbyt
         env:
