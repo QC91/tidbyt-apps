@@ -1,9 +1,9 @@
-name: Push Live Scores to Tidbyt
+yamlname: Push Live Scores to Tidbyt
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Automatically refreshes every 5 minutes
-  workflow_dispatch:      # Gives you a button to test it instantly
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 jobs:
   render_and_push:
@@ -12,19 +12,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Downloads the compiler directly from the official source link
       - name: Install Pixlet
         run: |
           curl -LO https://github.com
           tar -xvf pixlet_0.29.1_linux_amd64.tar.gz
           sudo mv pixlet /usr/local/bin/pixlet
 
-      # Converts your .star text code into a mini pixelated graphic
       - name: Render App to WebP
         run: |
           pixlet render sports_app.star -o output.webp
 
-      # Uses your saved secrets to push the graphic to your home display
       - name: Push Image to Tidbyt Device
         env:
           TIDBYT_API_KEY: ${{ secrets.TIDBYT_API_KEY }}
