@@ -1,30 +1,44 @@
-yamlname: Push Live Scores to Tidbyt
+name: Update Tidbyt Scores
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
+env:
+  PIXLET_VERSION: "0.34.0"
+
 jobs:
-  render_and_push:
+  render-and-push:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: Install libwebp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebp-dev
 
       - name: Install Pixlet
         run: |
-          curl -LO https://github.com
-          tar -xvf pixlet_0.29.1_linux_amd64.tar.gz
-          sudo mv pixlet /usr/local/bin/pixlet
+          curl -fsSL -o pixlet.tar.gz \
+            "https://github.com/tidbyt/pixlet/releases/download/v${PIXLET_VERSION}/pixlet_${PIXLET_VERSION}_linux_amd64.tar.gz"
+          tar -xzf pixlet.tar.gz
+          chmod +x ./pixlet
+          sudo mv ./pixlet /usr/local/bin/pixlet
+          pixlet version
 
-      - name: Render App to WebP
-        run: |
-          pixlet render sports_app.star -o output.webp
+      - name: Render app
+        run: pixlet render sports_app.star --output sports_app.webp
 
-      - name: Push Image to Tidbyt Device
+      - name: Push to Tidbyt
         env:
           TIDBYT_API_KEY: ${{ secrets.TIDBYT_API_KEY }}
           TIDBYT_DEVICE_ID: ${{ secrets.TIDBYT_DEVICE_ID }}
         run: |
-          pixlet push --api-token "$TIDBYT_API_KEY" "$TIDBYT_DEVICE_ID" output.webp
+          pixlet push \
+            --api-token "$TIDBYT_API_KEY" \
+            --installation-id "sportsapp" \
+            "$TIDBYT_DEVICE_ID" \
+            sports_app.webp
