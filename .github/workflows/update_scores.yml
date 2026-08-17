@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install libwebp
         run: |
@@ -29,8 +29,14 @@ jobs:
           sudo mv ./pixlet /usr/local/bin/pixlet
           pixlet version
 
-     - name: Render app
-  run: pixlet render sports_app.star league=mlb --output sports_app.webp
+      - name: Render app
+        run: pixlet render sports_app.star league=mlb --output sports_app.webp
+
+      - name: Save preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview
+          path: sports_app.webp
 
       - name: Push to Tidbyt
         env:
